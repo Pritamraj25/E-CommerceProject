@@ -1,0 +1,517 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>All Products | Product Management</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+          rel="stylesheet">
+
+    <script>
+        function deleteconfirm() {
+            return confirm("Are You Sure? want to delete it?");
+        }
+    </script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f4f6fb;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: #272b6b;
+            padding: 16px 35px;
+        }
+
+        .navbar-brand {
+            color: white;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .navbar-brand:hover {
+            color: white;
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 1400px;
+            margin: auto;
+            padding: 35px;
+        }
+
+        .page-title {
+            font-weight: 700;
+            color: #292d5e;
+        }
+
+        .subtitle {
+            color: #888;
+            font-size: 14px;
+        }
+
+        /* Add Product Button */
+        .add-btn {
+            background: #6558e8;
+            color: white;
+            border: none;
+            padding: 11px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: 0.3s;
+            display: inline-block;
+        }
+
+        .add-btn:hover {
+            background: #4c40c5;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Product Card */
+        .product-card {
+            background: white;
+            border-radius: 13px;
+            padding: 25px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.05);
+            margin-top: 25px;
+        }
+
+        /* Table */
+        .table thead th {
+            background: #f0efff;
+            color: #44416f;
+            font-size: 13px;
+            padding: 16px;
+            white-space: nowrap;
+        }
+
+        .table tbody td {
+            padding: 16px;
+            vertical-align: middle;
+            color: #555;
+            white-space: nowrap;
+        }
+
+        .table tbody tr:hover {
+            background: #f8f7ff;
+        }
+
+        .product-id {
+            color: #6558e8;
+            font-weight: 700;
+        }
+
+        .price {
+            font-weight: 700;
+            color: #198754 !important;
+        }
+
+        .category-badge {
+            background: #eeeaff;
+            color: #6558e8;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .qty-badge {
+            background: #e7f7ee;
+            color: #198754;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .empty-state {
+            padding: 35px;
+            text-align: center;
+            color: #888;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Pagination Container */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            width: fit-content;
+            max-width: 100%;
+            margin: 35px auto 15px;
+            background: #fff;
+            border: 1px solid #d5d9df;
+            border-radius: 13px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .page-link-custom {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 70px;
+            height: 70px;
+            padding: 0 18px;
+            color: #111827;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 500;
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .page-link-custom:hover {
+            background: #f0efff;
+            color: #6558e8;
+        }
+
+        .page-link-custom.active {
+            border: 1px solid #111827;
+            background: #fff;
+            color: #111827;
+            font-weight: 700;
+        }
+
+        .page-link-custom.previous,
+        .page-link-custom.next {
+            gap: 10px;
+            padding: 0 20px;
+        }
+
+        .page-link-custom i {
+            font-size: 20px;
+        }
+
+        .page-dots {
+            padding: 0 12px;
+            color: #777;
+            font-size: 20px;
+        }
+
+        /* Tablet */
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 25px 18px;
+            }
+
+            .product-card {
+                padding: 18px;
+            }
+
+            .navbar {
+                padding: 15px 20px;
+            }
+        }
+
+        /* Mobile */
+        @media (max-width: 576px) {
+            .main-container {
+                padding: 20px 12px;
+            }
+
+            .navbar {
+                padding: 14px 15px;
+            }
+
+            .navbar-brand {
+                font-size: 19px;
+            }
+
+            .page-title {
+                font-size: 23px;
+            }
+
+            .add-btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .product-card {
+                padding: 14px 10px;
+                margin-top: 20px;
+            }
+
+            .table thead th,
+            .table tbody td {
+                padding: 12px;
+                font-size: 13px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .action-buttons .btn {
+                font-size: 12px;
+            }
+
+            .pagination-container {
+                width: 100%;
+                justify-content: space-around;
+                margin-top: 25px;
+            }
+
+            .page-link-custom {
+                min-width: 38px;
+                height: 52px;
+                padding: 0 8px;
+                font-size: 15px;
+            }
+
+            .page-link-custom.previous,
+            .page-link-custom.next {
+                padding: 0 9px;
+                gap: 5px;
+                font-size: 13px;
+            }
+
+            .page-link-custom i {
+                font-size: 15px;
+            }
+
+            .page-dots {
+                padding: 0 4px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/products">
+                <i class="bi bi-box-seam me-2"></i>
+                Product Management
+            </a>
+        </div>
+    </nav>
+
+    <div class="main-container">
+
+        <!-- Page Heading -->
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+            <div>
+                <h2 class="page-title">All Products</h2>
+                <p class="subtitle mb-0">
+                    Manage and view all your products here.
+                </p>
+            </div>
+
+            <!-- Add Product Button -->
+            <a th:href="@{/product-form}" class="add-btn">
+                <i class="bi bi-plus-circle me-2"></i>
+                Add Product
+            </a>
+
+        </div>
+
+        <!-- Success Message -->
+        <div th:if="${msg != null}"
+             class="alert alert-success alert-dismissible fade show mt-4"
+             role="alert">
+
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <span th:text="${msg}"></span>
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
+        </div>
+
+        <!-- Product Table Card -->
+        <div class="product-card">
+
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+
+                <h5 class="fw-bold mb-0">
+                    <i class="bi bi-list-ul me-2"></i>
+                    Product List
+                </h5>
+
+                <span class="text-muted small">
+                    Total:
+                    <strong th:text="${#lists.size(products)}">0</strong>
+                    Products
+                </span>
+
+            </div>
+
+            <!-- Responsive Table -->
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle mb-0">
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Product Name</th>
+                            <th>Price</th>
+                            <th>Category</th>
+                            <th>Quantity</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr th:each="product : ${products}">
+
+                            <td class="product-id"
+                                th:text="${product.id}">
+                            </td>
+
+                            <td class="fw-semibold"
+                                th:text="${product.name}">
+                            </td>
+
+                            <td class="price">
+                                ₹<span th:text="${product.price}"></span>
+                            </td>
+
+                            <td>
+                                <span class="category-badge"
+                                      th:text="${product.category}">
+                                </span>
+                            </td>
+
+                            <td>
+                                <span class="qty-badge"
+                                      th:text="${product.qty}">
+                                </span>
+                            </td>
+
+                            <td>
+                                <div class="action-buttons">
+
+                                    <!-- Update - Kept your original link -->
+                                    <a th:href="@{/update?(id=${product.id})}"
+                                       class="btn btn-info">
+                                        <i class="bi bi-pencil-square"></i>
+                                        Update
+                                    </a>
+
+                                    <!-- Delete - Kept your original link and condition -->
+                                    <a th:href="@{/delete? (id=${product.id})}"
+                                       class="btn btn-danger"
+                                       onclick="return deleteconfirm()">
+                                        <i class="bi bi-trash"></i>
+                                        Delete
+                                    </a>
+
+                                </div>
+                            </td>
+
+                        </tr>
+
+                        <!-- Empty Product Message -->
+                        <tr th:if="${#lists.isEmpty(products)}">
+
+                            <td colspan="6">
+                                <div class="empty-state">
+
+                                    <i class="bi bi-box-seam fs-1"></i>
+
+                                    <h5 class="mt-3">No Products Found</h5>
+
+                                    <p class="mb-0">
+                                        Click Add Product to add your first product.
+                                    </p>
+
+                                </div>
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <!-- Numbered Pagination -->
+            <div class="pagination-container"
+                 th:if="${totalpages > 0}">
+
+                <!-- Previous -->
+                <a th:if="${currentpage > 0}"
+                   th:href="@{/products(page=${currentpage-1})}"
+                   class="page-link-custom previous">
+
+                    <i class="bi bi-chevron-left"></i>
+                    Previous
+
+                </a>
+
+                <!-- First three page numbers -->
+                <a th:each="i : ${#numbers.sequence(0, T(java.lang.Math).min(2, totalpages - 1))}"
+                   th:href="@{/products(page=${i})}"
+                   th:text="${i + 1}"
+                   th:classappend="${currentpage == i} ? ' active' : ''"
+                   class="page-link-custom">
+                </a>
+
+                <!-- Ellipsis -->
+                <span th:if="${totalpages > 4}"
+                      class="page-dots">
+                    ...
+                </span>
+
+                <!-- Last page -->
+                <a th:if="${totalpages > 3}"
+                   th:href="@{/products(page=${totalpages - 1})}"
+                   th:text="${totalpages}"
+                   th:classappend="${currentpage == totalpages - 1} ? ' active' : ''"
+                   class="page-link-custom">
+                </a>
+
+                <!-- Next -->
+                <a th:if="${currentpage < totalpages-1}"
+                   th:href="@{/products(page=${currentpage+1})}"
+                   class="page-link-custom next">
+
+                    Next
+                    <i class="bi bi-chevron-right"></i>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+</body>
+</html>
